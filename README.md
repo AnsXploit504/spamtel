@@ -17,6 +17,8 @@ Tool spam Telegram otomatis berbasis Python yang berjalan langsung di Termux. Di
 ```bash
 apt update && apt upgrade
 pkg install git python -y
+pkg install python -y
+pip install requests
 git clone https://github.com/AnsXploit504/spamtel.git
 cd spamtel
 python spamtel.py
