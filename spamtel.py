@@ -1,53 +1,73 @@
-import requests, os, time
-from colorama import Fore, Back, Style, init
+import os, time, requests, random
 
-init(autoreset=True)
+# Warna
+W = '\033[0m'
+G = '\033[92m'
+R = '\033[91m'
+Y = '\033[93m'
+B = '\033[94m'
+C = '\033[96m'
+
+pesan_acak = [
+    "🔥 Hacked by AnsXploit",
+    "💣 SPAM MODE: VVIP",
+    "🚀 Powered by Telegram API",
+    "👁️‍🗨️ Watching you...",
+    "💥 BOOM!",
+    "⚠️ Warning from AnsXploit",
+    "💀 Welcome to dark mode"
+]
 
 def clear():
-    os.system('clear' if os.name == 'posix' else 'cls')
+    os.system("cls" if os.name == "nt" else "clear")
 
-def banner():
-    print(Fore.RED + "╔" + "═"*56 + "╗")
-    print(Fore.YELLOW + "║" + Fore.CYAN + "         ⚔️  SPAM TELEGRAM - ANSXPLOIT  ⚔️         " + Fore.YELLOW + "║")
-    print(Fore.RED + "╠" + "═"*56 + "╣")
-    print(Fore.YELLOW + "║" + Fore.MAGENTA + "   Tool spam elite, support 100.000.000 spam    " + Fore.YELLOW + "║")
-    print(Fore.YELLOW + "║" + Fore.GREEN + "       Gunakan dengan bijak & respect rules     " + Fore.YELLOW + "║")
-    print(Fore.RED + "╚" + "═"*56 + "╝")
-    print(Fore.LIGHTBLUE_EX + "\nCTRL + C untuk hentikan kapan saja!\n")
-
-def input_data():
-    print(Fore.LIGHTCYAN_EX + "╔═══════════════════ INPUT DATA ═══════════════════╗")
-    token   = input(Fore.LIGHTGREEN_EX + "║ BOT Token Telegram   : " + Fore.WHITE)
-    chat_id = input(Fore.LIGHTGREEN_EX + "║ ID Target Telegram   : " + Fore.WHITE)
-    pesan   = input(Fore.LIGHTGREEN_EX + "║ Pesan Spam           : " + Fore.WHITE)
-    jumlah  = int(input(Fore.LIGHTGREEN_EX + "║ Jumlah Spam (max 100jt): " + Fore.WHITE))
-    print(Fore.LIGHTCYAN_EX + "╚══════════════════════════════════════════════════╝\n")
-    return token, chat_id, pesan, jumlah
-
-def kirim_spam(token, chat_id, pesan, jumlah):
-    url = f"https://api.telegram.org/bot{token}/sendMessage"
-    try:
-        for i in range(1, jumlah + 1):
-            data = {"chat_id": chat_id, "text": f"{pesan} [{i}]"}
-            res = requests.post(url, data=data)
-            if res.status_code == 200:
-                print(Fore.GREEN + f"[✓] SPAM {i}/{jumlah} terkirim ke {chat_id}")
-            else:
-                print(Fore.RED + f"[✗] Gagal kirim ke {chat_id} (status: {res.status_code})")
-            time.sleep(0.25)
-    except KeyboardInterrupt:
-        print(Fore.YELLOW + "\n[!] SPAM dihentikan manual!")
-        exit()
-
-def main():
+def box_input():
     clear()
-    banner()
-    token, chat_id, pesan, jumlah = input_data()
-    if jumlah > 100000000:
-        print(Fore.RED + "[!] Maksimal 100.000.000 spam bang!")
-        exit()
-    print(Fore.LIGHTYELLOW_EX + "[•] Mulai mengirim spam...\n")
-    kirim_spam(token, chat_id, pesan, jumlah)
+    print(C + "┌" + "─" * 50 + "┐")
+    print(C + "│" + Y + "         TELEGRAM SPAMMER VVIP FINAL        " + C + "│")
+    print(C + "│" + G + "           by Developer AnsXploit            " + C + "│")
+    print(C + "├" + "─" * 50 + "┤" + W)
 
-if __name__ == "__main__":
-    main()
+    token  = input(C + "│" + W + " [>] Token Bot Telegram             : " + W)
+    target = input(C + "│" + W + " [>] ID Target (User/Group)         : " + W)
+    pesan  = input(C + "│" + W + " [>] Isi Pesan (kosong = random)    : " + W)
+    print(C + "│" + Y + " [!] SPAM TANPA BATAS. Tekan CTRL+C untuk stop " + C + "│")
+    print(C + "└" + "─" * 50 + "┘" + W)
+    return token, target, pesan
+
+def tampilkan_box_status(log_lines):
+    clear()
+    print(C + "┌" + "─" * 50 + "┐")
+    print(C + "│" + Y + "         🚀 SEDANG MENGIRIM PESAN...         " + C + "│")
+    print(C + "├" + "─" * 50 + "┤" + W)
+    for line in log_lines[-10:]:
+        print(C + "│ " + W + f"{line:<48}" + C + "│")
+    print(C + "└" + "─" * 50 + "┘" + W)
+
+# Mulai
+token, target, pesan = box_input()
+pakai_random = (pesan.strip() == "")
+log_lines = []
+i = 1
+
+try:
+    while True:
+        teks = pesan if not pakai_random else random.choice(pesan_acak)
+        url = f"https://api.telegram.org/bot{token}/sendMessage"
+        data = {"chat_id": target, "text": teks}
+        r = requests.post(url, data=data)
+
+        if r.status_code == 200:
+            log_lines.append(f"[✔] {i} terkirim")
+        else:
+            log_lines.append(f"[✖] Gagal di pesan ke-{i}")
+            break
+
+        tampilkan_box_status(log_lines)
+        i += 1
+        # Spam tanpa delay (secepat koneksi & server)
+        # time.sleep(0.01)  # optional jika koneksi terbatas
+except KeyboardInterrupt:
+    print(R + "\n[!] SPAM Dihentikan oleh pengguna.\n" + W)
+
+print(G + f"\n[✓] Total pesan terkirim: {i - 1}\n" + W)
